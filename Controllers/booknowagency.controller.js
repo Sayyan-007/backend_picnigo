@@ -1,7 +1,7 @@
+require("dotenv").config();
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const express = require("express");
 const BookNowTourist = require("../models/booknowagency.model");
-require("dotenv").config();
 
 const create = async (req, res) => {
     try {
