@@ -1,4 +1,5 @@
 require("dotenv").config();
+console.log('Stripe Key:', process.env.STRIPE_SECRET_KEY ? 'Loaded' : 'Missing');
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const express = require("express");
 const BookNowTourist = require("../models/booknowagency.model");
