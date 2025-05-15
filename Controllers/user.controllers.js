@@ -1,5 +1,5 @@
-const bcrypt = require('bcrypt')
 require('dotenv').config()
+const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const UserData = require('../models/user.model')
 const travelpackages = require('../models/touristPackages.model')
