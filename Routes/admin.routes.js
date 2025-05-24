@@ -10,6 +10,9 @@ const adminRoute = express.Router()
 adminRoute.get('/userdata',adminUsercontrollers.userdata)
 adminRoute.patch('/userupdate',adminUsercontrollers.userupdate)
 
+// Admin Login
+adminRoute.post('/signupadmin',adminUsercontrollers.adminsignup)
+adminRoute.get('/loginadmin',adminUsercontrollers.adminlogin)
 
 
 // Travel Agency Page 

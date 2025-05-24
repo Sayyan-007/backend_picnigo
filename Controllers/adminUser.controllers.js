@@ -1,6 +1,8 @@
 const UserData=require('../models/user.model')
 const BookNowTourist = require("../models/booknowagency.model");
-
+const AdminData = require('../models/admin.model');
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 
 
     // USER CONTROLLERS
@@ -62,6 +64,84 @@ const userupdate = async (req, res) => {
     }
 }
 
+const adminsignup = async(req,res) =>{
 
+    try
+    {
+        const {body} = req
+        body.password = await bcrypt.hash(body.password,10)
+        const response  = await AdminData.create(body)
+        if(!response?._id)
+        {
+            return res.status(404).send({
+                message:"Bad Request"
+            })
+        }
+        response.password=null
+        const token=jwt.sign({sub:response},process.env.ADMIN_JWT_KEY,{expiresIn:'7d'})
+        return res.status(201).send({
+            message:"Signup Successfully",
+            Admindata:response,
+            token
+        })
+    }
+    catch(err)
+    {
+        console.log(err);
+        return res.status(500).send({
+            message: err.message || "Internal server error"
+        })
+    }
 
-module.exports={userdata,userupdate}
+}
+
+const adminlogin =async(req,res) =>{
+
+    try
+    {
+        const {adminname,password} = req.query
+        if(adminname == "")
+        {
+            return res.status(404).send({
+                message: "Admin name Required"
+            })
+        }
+        if(password == "")
+        {
+            return res.status(404).send({
+                message: "Password Required"
+            })
+        }
+        const user = await AdminData.findOne({adminname})
+ 
+        if(!user)
+        {
+            return res.status(404).send({
+                message:"Username Doesn't match"
+            })
+        }
+
+        const passwordValidation = await bcrypt.compare(password,user.password)
+        if(!passwordValidation)
+        {
+            return res.status(404).send({
+                message:"Password Doesn't match"
+            })
+        }
+        user.password = null
+        const token = jwt.sign({sub:user},process.env.ADMIN_JWT_KEY,{expiresIn:'7d'})
+        return res.status(202).send({
+            message:"Logged In",
+            Admindata:user,
+            token
+        })
+    }
+    catch(err)
+    {
+        return res.status(500).send({
+            message:"Internal Error Occured"
+        })
+    }
+}
+
+module.exports={userdata,userupdate,adminlogin,adminsignup}
